@@ -32,6 +32,16 @@ def main():
     cpp_code = read_file(cpp_file)
     yaml_str = read_file(yaml_file)
 
+    print("Calling LLM to refactor main.cpp...")
+    refactored_code = refactor_main_code(cpp_code)
+
+    # Save refactored file only if it changed
+    if refactored_code.strip() != cpp_code.strip():
+        refactored_path = os.path.splitext(cpp_file)[0] + "_refactored.cpp"
+        write_file(refactored_path, refactored_code)
+    else:
+        print("Refactor made no changes.")
+
     print("Calling LLM to generate tests...")
     test_code_raw = generate_tests_with_yaml(cpp_code, yaml_str)
     test_code = clean_llm_cpp_output(test_code_raw)
