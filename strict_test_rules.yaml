@@ -1,0 +1,14 @@
+test_framework: gtest
+naming:
+  test_prefix: "Test"
+  file_suffix: "_test.cpp"
+test_generation:
+  avoid_duplicates: true
+  include_edge_cases: true
+  include_main: true
+  target_private_functions: false
+libraries:
+  - <gtest/gtest.h>
+  - <iostream>
+refactor:
+  enabled: false
