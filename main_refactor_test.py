@@ -1,6 +1,7 @@
 import sys
 import os
 from llm_client import refactor_main_code, generate_tests_for_main
+from utils.utils import clean_llm_cpp_output
 
 def read_file(path):
     with open(path, 'r') as f:
@@ -35,8 +36,8 @@ def main():
         refactored_path = main_path
 
     print("Calling LLM to generate tests...")
-    test_code = generate_tests_for_main(refactored_code)
-
+    test_code_raw = generate_tests_for_main(refactored_code)
+    test_code = clean_llm_cpp_output(test_code_raw)
     test_file_path = os.path.join(os.path.dirname(main_path), "test_main.cpp")
     write_file(test_file_path, test_code)
 
