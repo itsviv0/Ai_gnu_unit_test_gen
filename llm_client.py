@@ -15,6 +15,7 @@ client = ChatCompletionsClient(
     credential=AzureKeyCredential(token),
 )
 
+
 def llm_call(prompt: str) -> str:
     messages = [
         SystemMessage("You are a helpful assistant."),
@@ -32,6 +33,7 @@ def llm_call(prompt: str) -> str:
         print("Error calling LLM:", e)
         return ""
 
+
 def refactor_main_code(code: str) -> str:
     prompt = f"""
     Refactor this main function for clarity and maintainability without changing its logic or behavior.
@@ -43,10 +45,23 @@ def refactor_main_code(code: str) -> str:
     """
     return llm_call(prompt)
 
-def generate_tests_for_main(refactored_code: str) -> str:
+
+def generate_tests_with_yaml(code: str, yaml_rules: str) -> str:
     prompt = f"""
-    Generate Google Test unit tests for the following C++ main function code.
-    Include appropriate headers. Avoid test duplication and follow best practices.
-    {refactored_code}
-    """
+        You are a C++ unit test generator.
+
+        Strictly follow the rules below defined in YAML format. Use Google Test framework unless specified otherwise.
+        Do not include duplicate tests or unnecessary includes. Generate Google Test unit tests for the following C++ main function code.
+        Include appropriate headers. Avoid test duplication and follow best practices.
+        {code}
+
+        YAML Rules:
+        ```yaml
+        {yaml_rules}
+        ```
+
+        C++ Code to test:
+        {code}
+        Generate the complete test file.
+        """
     return llm_call(prompt)
