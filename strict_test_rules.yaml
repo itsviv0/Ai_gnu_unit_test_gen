@@ -11,6 +11,6 @@ libraries:
   - <gtest/gtest.h>
   - <iostream>
 refactor:
-  enabled: false
+  enabled: true
 build:
   coverage_flags: true
