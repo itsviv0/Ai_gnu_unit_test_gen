@@ -12,3 +12,5 @@ libraries:
   - <iostream>
 refactor:
   enabled: false
+build:
+  coverage_flags: true
