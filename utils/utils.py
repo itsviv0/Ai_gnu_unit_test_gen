@@ -18,6 +18,10 @@ def clean_llm_cpp_output(response: str) -> str:
     code_match = re.search(r"```cc\n(.*?)```", response, re.DOTALL)
     if code_match:
         return code_match.group(1).strip()
+    
+    code_match = re.search(r"```h\n(.*?)```", response, re.DOTALL)
+    if code_match:
+        return code_match.group(1).strip()
 
     # if no backticks, assume entire response is code
     return response.strip()
