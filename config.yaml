@@ -1,0 +1,39 @@
+# Advanced Test Generator Configuration
+# Customize these settings to control test generation behavior
+
+# LLM Settings
+llm_model: xai/grok-3
+llm_temperature: 0.7
+llm_top_p: 0.95
+llm_max_retries: 3
+
+# Test Generation Settings
+test_framework: gtest
+target_coverage: 80.0
+include_edge_cases: true
+include_performance_tests: false
+max_tests_per_function: 5
+
+# File Handling
+excluded_dirs:
+  - tests
+  - refactored
+  - .git
+  - build
+  - __pycache__
+supported_extensions:
+  - .cpp
+  - .cc
+  - .c
+output_test_dir: tests
+output_refactored_dir: refactored
+
+# Validation Settings
+validate_syntax: true
+validate_compilation: true
+auto_fix_issues: true
+
+# Coverage Analysis
+use_coverage: true
+coverage_format: html # Options: html, xml, json
+coverage_threshold: 75.0
