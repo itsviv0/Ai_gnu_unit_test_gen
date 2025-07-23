@@ -7,15 +7,18 @@ from llm_client import (
     refine_generated_tests,
 )
 
+
 def read_file(path):
     with open(path, "r") as f:
         return f.read()
+
 
 def write_file(path, content):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w") as f:
         f.write(content)
     print(f"Saved: {path}")
+
 
 def generate_and_refine_tests(project_root, yaml_path):
     yaml_str = read_file(yaml_path)
@@ -30,7 +33,9 @@ def generate_and_refine_tests(project_root, yaml_path):
 
         # Save refactored file if different
         if refactored_code.strip() != original_code.strip():
-            refactored_path = cpp_file.replace(project_root, os.path.join(project_root, "refactored"))
+            refactored_path = cpp_file.replace(
+                project_root, os.path.join(project_root, "refactored")
+            )
             write_file(refactored_path, refactored_code)
         else:
             refactored_code = original_code  # fallback to original if unchanged
@@ -45,9 +50,12 @@ def generate_and_refine_tests(project_root, yaml_path):
         refined_code = refine_generated_tests(test_code, yaml_str)
         write_file(test_file_path, refined_code)
 
+
 def main():
     if len(sys.argv) != 3:
-        print("Usage: python main_batch_test_generator.py <project_root> <yaml_rules_path>")
+        print(
+            "Usage: python main_batch_test_generator.py <project_root> <yaml_rules_path>"
+        )
         sys.exit(1)
 
     project_root = sys.argv[1]
@@ -61,6 +69,9 @@ def main():
         sys.exit(1)
 
     generate_and_refine_tests(project_root, yaml_path)
+
+    print("\n✅ All tests generated and refined successfully!")
+
 
 if __name__ == "__main__":
     main()
