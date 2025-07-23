@@ -2,6 +2,7 @@ import os
 from azure.ai.inference import ChatCompletionsClient
 from azure.ai.inference.models import SystemMessage, UserMessage
 from azure.core.credentials import AzureKeyCredential
+from utils.utils import clean_llm_cpp_output
 
 # Model setup
 endpoint = "https://models.github.ai/inference"
@@ -17,16 +18,10 @@ client = ChatCompletionsClient(
 
 
 def llm_call(prompt: str) -> str:
-    messages = [
-        SystemMessage("You are a helpful assistant."),
-        UserMessage(prompt)
-    ]
+    messages = [SystemMessage("You are a helpful assistant."), UserMessage(prompt)]
     try:
         response = client.complete(
-            messages=messages,
-            temperature=0.7,
-            top_p=0.95,
-            model=model
+            messages=messages, temperature=0.7, top_p=0.95, model=model
         )
         return response.choices[0].message.content
     except Exception as e:
@@ -43,7 +38,8 @@ def refactor_main_code(code: str) -> str:
     {code}
     ```
     """
-    return llm_call(prompt)
+    response = llm_call(prompt)
+    return clean_llm_cpp_output(response)
 
 
 def generate_tests_with_yaml(code: str, yaml_rules: str) -> str:
@@ -68,7 +64,9 @@ def generate_tests_with_yaml(code: str, yaml_rules: str) -> str:
         {code}
         Generate the complete test file.
         """
-    return llm_call(prompt)
+    response = llm_call(prompt)
+    return clean_llm_cpp_output(response)
+
 
 def refine_generated_tests(test_code: str, yaml_rules: str) -> str:
     prompt = f"""
@@ -90,4 +88,5 @@ def refine_generated_tests(test_code: str, yaml_rules: str) -> str:
     ```
     Return the improved test file as clean C++ code.
     """
-    return llm_call(prompt)
+    response = llm_call(prompt)
+    return clean_llm_cpp_output(response)

@@ -1,31 +1,57 @@
 import re
 import os
 
+
 def clean_llm_cpp_output(response: str) -> str:
     """
     Extract C++ code block from markdown-like LLM response.
     Strips explanations and markdown formatting.
     """
-    
-    code_match = re.search(r"```cpp\n(.*?)```", response, re.DOTALL)
-    if code_match:
-        return code_match.group(1).strip()
-    
-    code_match = re.search(r"```c\n(.*?)```", response, re.DOTALL)
-    if code_match:
-        return code_match.group(1).strip()
+    if not response:
+        return ""
 
-    code_match = re.search(r"```cc\n(.*?)```", response, re.DOTALL)
-    if code_match:
-        return code_match.group(1).strip()
-    
-    code_match = re.search(r"```h\n(.*?)```", response, re.DOTALL)
-    if code_match:
-        return code_match.group(1).strip()
+    # Try to find code blocks with different language specifiers
+    patterns = [
+        r"```cpp\n(.*?)```",
+        r"```c\+\+\n(.*?)```",
+        r"```c\n(.*?)```",
+        r"```cc\n(.*?)```",
+        r"```h\n(.*?)```",
+        r"```\n(.*?)```",  # Generic code block
+        r"```(.*?)```",  # Code block without language
+    ]
 
-    # if no backticks, assume entire response is code
-    return response.strip()
+    for pattern in patterns:
+        code_match = re.search(pattern, response, re.DOTALL)
+        if code_match:
+            extracted_code = code_match.group(1).strip()
+            # Basic validation that this looks like C++ code
+            if any(
+                keyword in extracted_code
+                for keyword in [
+                    "#include",
+                    "int ",
+                    "void ",
+                    "class ",
+                    "struct ",
+                    "TEST(",
+                ]
+            ):
+                return extracted_code
 
+    # If no code blocks found, check if the entire response looks like C++ code
+    response_stripped = response.strip()
+    if any(
+        keyword in response_stripped
+        for keyword in ["#include", "int main", "void ", "class ", "struct ", "TEST("]
+    ):
+        return response_stripped
+
+    # Fallback: return the response as-is but warn
+    print(
+        "Warning: Could not extract clean C++ code from LLM response, using full response"
+    )
+    return response_stripped
 
 
 def find_cpp_files(root_dir, exclude_dirs=None):
