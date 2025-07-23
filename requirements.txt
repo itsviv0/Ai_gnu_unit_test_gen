@@ -1,1 +1,5 @@
-azure-ai-inference
+azure-ai-inference>=1.0.0
+pyyaml>=6.0
+pathlib>=1.0.1
+dataclasses>=0.8
+typing-extensions>=4.0.0
